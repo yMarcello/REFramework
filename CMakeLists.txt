@@ -109,6 +109,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(kananlib)
 
+message(STATUS "Fetching safetyhook (e175896c67abf49360acafe8879205a138fe6b2b)...")
+FetchContent_Declare(
+	safetyhook
+	GIT_REPOSITORY
+		https://github.com/cursey/safetyhook
+	GIT_TAG
+		e175896c67abf49360acafe8879205a138fe6b2b
+)
+FetchContent_MakeAvailable(safetyhook)
+
 # Target spdlog
 if(REF_BUILD_DEPENDENCIES AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework-dependencies
 	set(CMKR_TARGET spdlog)
@@ -174,41 +184,6 @@ if(REF_BUILD_DEPENDENCIES AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework-dep
 
 	target_include_directories(glm_static PUBLIC
 		"dependencies/glm"
-	)
-
-	unset(CMKR_TARGET)
-	unset(CMKR_SOURCES)
-endif()
-
-# Target minhook
-if(REF_BUILD_DEPENDENCIES AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework-dependencies
-	set(CMKR_TARGET minhook)
-	set(minhook_SOURCES "")
-
-	list(APPEND minhook_SOURCES
-		"dependencies/minhook/src/buffer.c"
-		"dependencies/minhook/src/hde/hde32.c"
-		"dependencies/minhook/src/hde/hde64.c"
-		"dependencies/minhook/src/hook.c"
-		"dependencies/minhook/src/trampoline.c"
-	)
-
-	list(APPEND minhook_SOURCES
-		cmake.toml
-	)
-
-	set(CMKR_SOURCES ${minhook_SOURCES})
-	add_library(minhook STATIC)
-
-	if(minhook_SOURCES)
-		target_sources(minhook PRIVATE ${minhook_SOURCES})
-	endif()
-
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${minhook_SOURCES})
-
-	target_include_directories(minhook PUBLIC
-		"dependencies/minhook/include"
-		"dependencies/minhook/src/hde"
 	)
 
 	unset(CMKR_TARGET)
@@ -454,7 +429,7 @@ target_compile_options(utility PUBLIC
 
 target_link_libraries(utility PUBLIC
 	spdlog
-	minhook
+	safetyhook
 	kananlib
 )
 
@@ -1518,7 +1493,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -1700,7 +1674,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -2789,7 +2762,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -2971,7 +2943,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -4060,7 +4031,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -4242,7 +4212,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -4877,7 +4846,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -5512,7 +5480,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi
@@ -6147,7 +6114,6 @@ if(REF_BUILD_FRAMEWORK AND CMAKE_SIZEOF_VOID_P EQUAL 8) # build-framework
 		sol2
 		imgui
 		imguizmo
-		minhook
 		d3d11
 		glm_static
 		shlwapi

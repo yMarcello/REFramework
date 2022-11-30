@@ -1129,7 +1129,7 @@ std::optional<std::string> VR::hijack_camera() {
                 // Hook the native function
                 g_projection_matrix_hook2 = std::make_unique<FunctionHook>(native_func, gui_camera_get_projection_matrix_hook);
 
-                if (g_projection_matrix_hook2->create()) {
+                if (g_projection_matrix_hook2->is_valid()) {
                     spdlog::info("Hooked via.gui.GUICamera.get_ProjectionMatrix");
                 }
             } else {
@@ -1197,7 +1197,7 @@ std::optional<std::string> VR::hijack_wwise_listeners() {
 
     g_wwise_listener_update_hook = std::make_unique<FunctionHook>(update_native, wwise_listener_update_hook);
 
-    if (!g_wwise_listener_update_hook->create()) {
+    if (!g_wwise_listener_update_hook->is_valid()) {
         return "VR init failed: via.wwise.WwiseListener update native function hook failed.";
     }
 

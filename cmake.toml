@@ -81,16 +81,6 @@ sources = ["dependencies/glm/glm/**.cpp"]
 include-directories = ["dependencies/glm"]
 condition = "build-framework-dependencies"
 
-[target.minhook]
-type = "static"
-sources = ["dependencies/minhook/src/**.c"]
-include-directories = [
-    "dependencies/minhook/include",
-    "dependencies/minhook/src/hde",
-]
-condition = "build-framework-dependencies"
-
-
 [target.imgui]
 type = "static"
 sources = ["dependencies/imgui/*.cpp"]
@@ -145,6 +135,10 @@ tag = "v1.34.10"
 git = "https://github.com/cursey/kananlib"
 tag = "main"
 
+[fetch-content.safetyhook]
+git = "https://github.com/cursey/safetyhook"
+tag = "e175896c67abf49360acafe8879205a138fe6b2b"
+
 [target.utility]
 type = "static"
 sources = ["shared/utility/**.cpp", "shared/utility/**.c"]
@@ -153,7 +147,7 @@ compile-options = ["/EHa"]
 compile-features = ["cxx_std_20"]
 link-libraries = [
     "spdlog",
-    "minhook",
+    "safetyhook",
     "kananlib"
 ]
 
@@ -193,7 +187,6 @@ link-libraries = [
     "sol2",
     "imgui",
     "imguizmo",
-    "minhook",
     "d3d11",
     "glm_static",
     "shlwapi",

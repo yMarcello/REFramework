@@ -1,8 +1,6 @@
 #include <cstdint>
 #include <concepts>
 
-#include <hde64.h>
-
 #include "HookManager.hpp"
 #include "sdk/REContext.hpp"
 #include "sdk/REManagedObject.hpp"

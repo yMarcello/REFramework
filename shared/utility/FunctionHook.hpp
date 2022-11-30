@@ -2,7 +2,9 @@
 
 #include <windows.h>
 #include <cstdint>
+#include <memory>
 
+#include <SafetyHook.hpp>
 #include <utility/Address.hpp>
 
 class FunctionHook {
@@ -13,30 +15,22 @@ public:
     FunctionHook(Address target, Address destination);
     virtual ~FunctionHook();
 
-    bool create();
-
-    // Called automatically by the destructor, but you can call it explicitly
-    // if you need to remove the hook.
-    bool remove();
-
     auto get_original() const {
-        return m_original;
+        return (uintptr_t)m_inline_hook->trampoline();
     }
 
     template <typename T>
     T* get_original() const {
-        return (T*)m_original;
+        return m_inline_hook->original<T>();
     }
 
     auto is_valid() const {
-        return m_original != 0;
+        return m_inline_hook != nullptr;
     }
 
     FunctionHook& operator=(const FunctionHook& other) = delete;
     FunctionHook& operator=(FunctionHook&& other) = delete;
 
 private:
-    uintptr_t m_target{ 0 };
-    uintptr_t m_destination{ 0 };
-    uintptr_t m_original{ 0 };
+    SafetyInlineHook m_inline_hook{};
 };

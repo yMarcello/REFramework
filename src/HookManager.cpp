@@ -1,23 +1,15 @@
-#include <hde64.h>
 #include <spdlog/spdlog.h>
+#include <utility/Scan.hpp>
 
 #include "HookManager.hpp"
 
 namespace detail {
 void* get_actual_function(void* possible_fn) {
     auto actual_fn = possible_fn;
-    auto ip = (uintptr_t)possible_fn;
+    const auto jmp = utility::scan_disasm((uintptr_t)possible_fn, 10, "E9 ? ? ? ?");
 
-    // Disassemble the first few instructions to see if there is a jmp to an actual function.
-    for (auto i = 0; i < 10; ++i) {
-        hde64s hde{};
-        auto len = hde64_disasm((void*)ip, &hde);
-        ip += len;
-
-        if (hde.opcode == 0xE9) { // jmp.
-            actual_fn = (void*)(ip + hde.imm.imm32);
-            break;
-        }
+    if (jmp) {
+        actual_fn = (void*)utility::calculate_absolute(*jmp + 1);
     }
 
     if (possible_fn != actual_fn) {
@@ -366,10 +358,12 @@ HookManager::HookId HookManager::add(sdk::REMethodDefinition* fn, HookManager::P
     // Set the facilitators original function pointer.
     *(uintptr_t*)(hook->facilitator_fn + code.labelOffsetFromBase(orig_label)) = fn_hook->get_original();
 
-    fn_hook->create();
-    m_hooked_fns.emplace(fn, std::move(hook));
-
-    spdlog::info("[HookManager] Hook {} added for '{}' @ {:p}", hook_id, fn->get_name(), target_fn);
+    if (fn_hook->is_valid()) {
+        m_hooked_fns.emplace(fn, std::move(hook));
+        spdlog::info("[HookManager] Hook {} added for '{}' @ {:p}", hook_id, fn->get_name(), target_fn);
+    } else {
+        spdlog::error("[HookManager] Failed to add hook {} for '{}' @ {:p}", hook_id, fn->get_name(), target_fn);
+    }
 
     return hook_id;
 }

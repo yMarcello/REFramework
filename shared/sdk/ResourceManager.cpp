@@ -1,5 +1,4 @@
 #include <spdlog/spdlog.h>
-#include <hde64.h>
 
 #include "utility/Scan.hpp"
 #include "utility/Module.hpp"
@@ -71,21 +70,11 @@ void ResourceManager::update_pointers() {
         // use HDE to disasm *string_reference - 3 and disasm forward a bit
         // to find a call instruction which is the function we want
         auto ip = *string_reference - 3;
-        bool found = false;
-
-        for (auto i = 0; i < 10; ++i) {
-            hde64s hde{};
-            auto len = hde64_disasm((void*)ip, &hde);
-
-            if (hde.opcode == 0xE8) { // call
-                found = true;
-                break;
-            }
-
-            ip += len;
-        }
+        const auto found = utility::scan_disasm(ip, 10, "E8 ? ? ? ?");
 
         if (found) {
+            ip = *found;
+
             s_create_resource_fn = (decltype(s_create_resource_fn))utility::calculate_absolute(ip + 1);
             s_create_resource_reference = ip;
             Resource::update_pointers();

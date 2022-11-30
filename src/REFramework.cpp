@@ -5,11 +5,6 @@
 
 #include <spdlog/sinks/basic_file_sink.h>
 
-// minhook, used for AllocateBuffer
-extern "C" {
-#include <../buffer.h>
-};
-
 #include <imgui.h>
 #include <ImGuizmo.h>
 #include "re2-imgui/font_robotomedium.hpp"
@@ -145,13 +140,6 @@ REFramework::REFramework(HMODULE reframework_module)
 
     spdlog::info("Game Module Addr: {:x}", (uintptr_t)m_game_module);
     spdlog::info("Game Module Size: {:x}", module_size);
-
-    // preallocate some memory for minhook to mitigate failures (temporarily at least... this should in theory fail when too many hooks are made)
-    // but, 64 slots should be enough for now. 
-    // so... TODO: modify minhook to use absolute jumps when failing to allocate memory nearby
-    const auto halfway_module = (uintptr_t)m_game_module + (module_size / 2);
-    const auto pre_allocated_buffer = (uintptr_t)AllocateBuffer((LPVOID)halfway_module); // minhook function
-    spdlog::info("Preallocated buffer: {:x}", pre_allocated_buffer);
 
 #ifdef DEBUG
     spdlog::set_level(spdlog::level::debug);
