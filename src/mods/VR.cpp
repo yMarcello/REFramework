@@ -1100,7 +1100,7 @@ std::optional<std::string> VR::hijack_input() {
     // Hook the native function
     g_input_hook = std::make_unique<FunctionHook>(func, inputsystem_update_hook);
 
-    if (!g_input_hook->create()) {
+    if (!g_input_hook->is_valid()) {
         return "VR init failed: InputSystem.update native function hook failed.";
     }
 #endif
